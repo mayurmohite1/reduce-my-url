@@ -1,0 +1,17 @@
+{
+  "name": "reduce-my-url",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @reduce-my-url/api & npm run dev -w web",
+    "build": "npm run build -ws",
+    "lint": "npm run lint -ws",
+    "format": "prettier -w ."
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2"
+  }
+}

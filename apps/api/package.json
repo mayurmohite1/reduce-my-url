@@ -1,0 +1,24 @@
+{
+  "name": "@reduce-my-url/api",
+  "private": true,
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "lint": "node -c src/index.js",
+    "build": "echo \"no build step\""
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "geoip-lite": "^1.4.10",
+    "ioredis": "^5.7.0",
+    "jose": "^6.1.0",
+    "nanoid": "^5.1.5",
+    "pg": "^8.16.3",
+    "zod": "^4.1.5"
+  }
+}
+
