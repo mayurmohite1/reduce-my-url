@@ -1,5 +1,6 @@
 # Dependency directories
 node_modules/
+*.txt
 
 # Local environment files
 .env

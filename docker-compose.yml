@@ -1,6 +1,7 @@
 services:
   postgres:
     image: postgres:16
+    container_name: reduce-my-url-postgres
     environment:
       POSTGRES_USER: app
       POSTGRES_PASSWORD: app
@@ -14,9 +15,12 @@ services:
       interval: 5s
       timeout: 5s
       retries: 20
+    networks:
+      - reduce-my-url-network
 
   redis:
     image: redis:7-alpine
+    container_name: reduce-my-url-redis
     ports:
       - "6379:6379"
     command: ["redis-server", "--appendonly", "yes"]
@@ -27,8 +31,52 @@ services:
       interval: 5s
       timeout: 3s
       retries: 30
+    networks:
+      - reduce-my-url-network
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    container_name: reduce-my-url-api
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgres://app:app@postgres:5432/shortener
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:-your-jwt-secret-change-this-in-production}
+      PUBLIC_BASE_URL: http://localhost:4000
+      GEO_MODE: geoip-lite
+    ports:
+      - "4000:4000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - reduce-my-url-network
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    container_name: reduce-my-url-web
+    ports:
+      - "5137:80"
+    depends_on:
+      - api
+    environment:
+      - VITE_API_BASE_URL=http://api:4000
+    networks:
+      - reduce-my-url-network
+    restart: unless-stopped
 
 volumes:
   pg_data:
   redis_data:
 
+networks:
+  reduce-my-url-network:
+    driver: bridge
