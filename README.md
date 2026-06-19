@@ -124,6 +124,27 @@ Or in VS Code: **Terminal → Split Terminal** and run one command in each pane.
 | API health | http://localhost:4000/health |
 | Dashboard | http://localhost:5173 (Vite prints the exact URL) |
 
+## Optional: Run on kind with stable localhost ports
+
+Use this when you want the frontend and API on fixed localhost ports without repeated `kubectl port-forward`.
+
+1. Create the cluster with port mappings:
+
+```bash
+bash scripts/kind-recreate.sh reduce-my-url
+```
+
+2. After the script completes:
+
+- Frontend: http://localhost:5137
+- API: http://localhost:4000
+
+3. If you later need to delete and recreate the cluster:
+
+```bash
+bash scripts/kind-recreate.sh reduce-my-url
+```
+
 ### 6) Try it
 
 1. Open the web app → **Register** → **Login**
@@ -140,6 +161,28 @@ docker compose up -d
 ```
 
 Then use the same steps from “App config + npm install” above.
+
+## Optional: Run on kind
+
+If you want to run this stack on a local `kind` cluster, build the local images and load them into kind before applying the manifests.
+
+```bash
+kind create cluster --name reduce-my-url
+bash scripts/kind-deploy.sh reduce-my-url
+```
+
+This script will:
+- build the API and web images locally
+- load them into the kind cluster
+- apply the `k8s/` manifests in the correct order
+
+You can then verify with:
+
+```bash
+kubectl get pods -n reduce-my-url
+kubectl get svc -n reduce-my-url
+kubectl get ingress -n reduce-my-url
+```
 
 ---
 

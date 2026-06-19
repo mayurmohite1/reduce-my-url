@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: reduce-my-url-config
+  namespace: reduce-my-url
+data:
+  NODE_ENV: production
+  PUBLIC_BASE_URL: http://localhost:8080
+  VITE_API_BASE_URL: http://localhost/api
+  GEO_MODE: geoip-lite
+  REDIS_HOST: redis
+  REDIS_PORT: "6379"
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: "5432"

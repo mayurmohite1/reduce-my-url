@@ -35,9 +35,10 @@ services:
       - reduce-my-url-network
 
   api:
-    build:
-      context: ./apps/api
-      dockerfile: Dockerfile
+    # build:
+    #   context: ./apps/api
+    #   dockerfile: Dockerfile
+    image: reduce-my-url-api:dev
     container_name: reduce-my-url-api
     environment:
       NODE_ENV: production
@@ -59,9 +60,10 @@ services:
     restart: unless-stopped
 
   web:
-    build:
-      context: ./apps/web
-      dockerfile: Dockerfile
+    # build:
+    #   context: ./apps/web
+    #   dockerfile: Dockerfile
+    image: reduce-my-url-web:dev
     container_name: reduce-my-url-web
     ports:
       - "5137:80"

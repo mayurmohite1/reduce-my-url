@@ -7,6 +7,7 @@
   ],
   "scripts": {
     "dev": "npm run dev -w @reduce-my-url/api & npm run dev -w web",
+    "kind:deploy": "bash scripts/kind-deploy.sh",
     "build": "npm run build -ws",
     "lint": "npm run lint -ws",
     "format": "prettier -w ."

@@ -19,7 +19,7 @@ export async function migrate() {
   await ensureMigrationsTable();
 
   // Migrations live in packages/db/migrations
-  const migrationsDir = path.resolve(__dirname, "../../..", "packages/db/migrations");
+  const migrationsDir = path.resolve(__dirname, "../packages/db/migrations");
   const files = (await fs.readdir(migrationsDir))
     .filter((f) => f.endsWith(".sql"))
     .sort();
@@ -40,5 +40,8 @@ export async function migrate() {
       throw err;
     }
   }
+  console.log("Migration dir:", migrationsDir);
+  console.log("Files:", files);
 }
+
 

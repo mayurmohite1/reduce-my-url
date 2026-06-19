@@ -75,7 +75,7 @@ app.post("/api/links", requireUser(), async (req, res) => {
     const base = process.env.PUBLIC_BASE_URL ?? `http://localhost:${process.env.PORT ?? 4000}`;
     return res
       .status(201)
-      .json({ link: { ...link, shortUrl: `${base.replace(/\/$/, "")}/${link.code}` } });
+      .json({ link: { ...link, shortUrl: `${base.replace(/\/$/, "")}/r/${link.code}` } });
   } catch {
     return res.status(409).json({ error: "code_taken" });
   }
@@ -87,7 +87,7 @@ app.get("/api/links", requireUser(), async (req, res) => {
     [req.user.id],
   );
   const base = process.env.PUBLIC_BASE_URL ?? `http://localhost:${process.env.PORT ?? 4000}`;
-  const links = rows.map((r) => ({ ...r, shortUrl: `${base.replace(/\/$/, "")}/${r.code}` }));
+  const links = rows.map((r) => ({ ...r, shortUrl: `${base.replace(/\/$/, "")}/r/${r.code}` }));
   res.json({ links });
 });
 
@@ -129,7 +129,7 @@ async function loadRedirectFromDb(code) {
   return { linkId: r.id, targetUrl: r.target_url };
 }
 
-app.get("/:code", async (req, res) => {
+app.get("/r/:code", async (req, res) => {
   const code = req.params.code;
   if (!/^[a-zA-Z0-9_-]{4,32}$/.test(code)) return res.status(404).send("Not found");
 
@@ -147,7 +147,7 @@ app.get("/:code", async (req, res) => {
 
   if (!cached) {
     // async warm
-    cacheRedirect(code, redirect).catch(() => {});
+    cacheRedirect(code, redirect).catch(() => { });
   }
 
   // fire-and-forget analytics insert (best-effort)
@@ -158,7 +158,7 @@ app.get("/:code", async (req, res) => {
   query(
     "insert into click_events(link_id, ip, user_agent, referrer, country_code, region, city) values ($1, $2, $3, $4, $5, $6, $7)",
     [redirect.linkId, ip, userAgent, referrer, geo.countryCode, geo.region, geo.city],
-  ).catch(() => {});
+  ).catch(() => { });
 
   res.redirect(302, redirect.targetUrl);
 });
@@ -223,9 +223,7 @@ app.get("/api/analytics/:code/summary", requireUser(), async (req, res) => {
 });
 
 async function main() {
-  if ((process.env.NODE_ENV ?? "development") === "development") {
-    await migrate();
-  }
+  await migrate();
 
   const port = Number(process.env.PORT ?? 4000);
   app.listen(port, () => {
