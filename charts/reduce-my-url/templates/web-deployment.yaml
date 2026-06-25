@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: reduce-my-url
+  labels:
+    app: web
+spec:
+  replicas: {{ .Values.web.replicaCount }}
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: web
+          image: {{ .Values.web.image.repository }}:{{ .Values.web.image.tag }}
+          imagePullPolicy: {{ .Values.web.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.web.port }}
+          resources:
+            requests:
+              cpu: {{ .Values.web.resources.requests.cpu | quote }}
+              memory: {{ .Values.web.resources.requests.memory | quote }}
+            limits:
+              cpu: {{ .Values.web.resources.limits.cpu | quote }}
+              memory: {{ .Values.web.resources.limits.memory | quote }}

@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: reduce-my-url
+  labels:
+    app: api
+spec:
+  replicas: {{ .Values.api.replicaCount }}
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: api
+          image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"
+          imagePullPolicy: {{ .Values.api.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.api.port }}
+              hostPort: {{ .Values.api.port }}
+          env:
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: reduce-my-url-config
+                  key: NODE_ENV
+            - name: PORT
+              value: "{{ .Values.api.port }}"
+            - name: DATABASE_URL
+              value: {{ .Values.api.env.databaseUrl }}
+            - name: REDIS_URL
+              value: {{ .Values.api.env.redisUrl }}
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: reduce-my-url-secrets
+                  key: JWT_SECRET
+            - name: PUBLIC_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: reduce-my-url-config
+                  key: PUBLIC_BASE_URL
+            - name: GEO_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: reduce-my-url-config
+                  key: GEO_MODE
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.api.readinessProbe.path }}
+              port: 4000
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 10
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.api.livenessProbe.path }}
+              port: 4000
+            initialDelaySeconds: 20
+            timeoutSeconds: 5
+            periodSeconds: 15
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: {{ .Values.api.resources.requests.cpu }}
+              memory: {{ .Values.api.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.api.resources.limits.cpu }}
+              memory: {{ .Values.api.resources.limits.memory }}

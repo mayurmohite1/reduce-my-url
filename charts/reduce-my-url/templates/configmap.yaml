@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: reduce-my-url-config
+  namespace: reduce-my-url
+data:
+  NODE_ENV: {{ .Values.config.nodeEnv | quote }}
+  PUBLIC_BASE_URL: {{ .Values.config.publicBaseUrl | quote }}
+  VITE_API_BASE_URL: {{ .Values.config.viteApiBaseUrl | quote }}
+  GEO_MODE: {{ .Values.config.geoMode | quote }}
+  REDIS_HOST: {{ .Values.config.redis.host | quote }}
+  REDIS_PORT: {{ .Values.config.redis.port | quote }}
+  POSTGRES_HOST: {{ .Values.config.postgres.host | quote }}
+  POSTGRES_PORT: {{ .Values.config.postgres.port | quote }}
